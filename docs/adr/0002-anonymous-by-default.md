@@ -19,7 +19,7 @@ Tools that pick one mode (Bonusly is fully signed; Slack "thanks bot" is signed;
 Notes have an **optional `from` field** in the shared data model:
 
 ```ts
-type Note = { id, to, text, from?: string, ts, revealed }
+type Note = { id; to; text; from?: string; ts; revealed };
 ```
 
 The compose UI defaults the "Sign with my name" checkbox to **off**. The user can toggle it on per-note. If they leave it off, `from` is `undefined` and the wall renders "— anonymous". If they toggle on, `from = myName` (a local localStorage value, never validated against any roster).
