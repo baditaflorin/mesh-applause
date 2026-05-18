@@ -1,6 +1,9 @@
 export const appConfig = {
   appName: "mesh-applause",
   storagePrefix: "mesh-applause",
+  description:
+    "Peer-to-peer mesh: anonymous kudos wall. Send appreciations to teammates; reveal at standup. Replaces Bonusly, Awardco.",
+  accentHex: "#e561c1",
   version: __APP_VERSION__,
   commit: __GIT_COMMIT__,
   repositoryUrl: "https://github.com/baditaflorin/mesh-applause",
