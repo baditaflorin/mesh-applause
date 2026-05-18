@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ApplauseWall } from "./features/applause/ApplauseWall";
 import { SettingsDrawer } from "./features/settings/SettingsDrawer";
 import { appConfig } from "./shared/config";
-import { InviteShareButton } from "@baditaflorin/mesh-common";
+import { InviteShareButton, MeshBeacon } from "@baditaflorin/mesh-common";
 
 const STORAGE = {
   room: `${appConfig.storagePrefix}:room`,
@@ -30,6 +30,8 @@ export function App() {
       <ApplauseWall roomId={roomId} myName={myName} />
 
       <InviteShareButton appName={appConfig.appName} roomId={roomId} />
+      <MeshBeacon app={appConfig.appName} room={roomId} />
+
       <button
         type="button"
         className="settings-fab"
