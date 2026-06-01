@@ -202,7 +202,9 @@ export function ApplauseWall({ roomId, myName }: Props) {
   return (
     <div className="applause-stage">
       <div className="applause-hud">
-        <span>{peerCount + 1} phones</span>
+        <span>
+          {peerCount + 1} {peerCount + 1 === 1 ? "person" : "people"} here
+        </span>
         <span>·</span>
         <span>{pendingCount} pending</span>
         <span>·</span>
