@@ -12,19 +12,24 @@ const storagePrefix = pkg.name;
  * Opens two pages in the same browser context so y-webrtc's BroadcastChannel
  * fallback syncs them with no signaling server / no network.
  *
- * Apps that show a peer count in the UI should pass this. Apps that don't
- * surface peer count can override or skip this test.
+ * This product starts transport only after its intentional room-entry gesture.
+ * The deeper propagation assertion lives in `feature.spec.ts`; this companion
+ * ensures the visible peer count includes the offline two-tab transport too.
  */
 test("two peers in the same room can both load", async ({ browser, baseURL }) => {
   const { a, b, cleanup } = await openTwoPeers(browser, baseURL ?? "", { storagePrefix });
   try {
-    await expect(a.locator(".mesh-self-ref, .self-ref").first()).toBeVisible();
-    await expect(b.locator(".mesh-self-ref, .self-ref").first()).toBeVisible();
-    // Both should reach a non-loading state within the timeout — most apps
-    // either show a count, a heading, or a primary control. We assert that
-    // at least one <h1> is present on both pages.
-    await expect(a.getByRole("heading", { level: 1 }).first()).toBeVisible();
-    await expect(b.getByRole("heading", { level: 1 }).first()).toBeVisible();
+    await a.getByRole("button", { name: "Open the appreciation circle" }).click();
+    await b.getByRole("button", { name: "Open the appreciation circle" }).click();
+
+    await expect(a.getByRole("heading", { name: "Hold a little good." })).toBeVisible();
+    await expect(b.getByRole("heading", { name: "Hold a little good." })).toBeVisible();
+    await expect(a.getByLabel("Circle status")).toContainText("2 people in the circle", {
+      timeout: 10_000,
+    });
+    await expect(b.getByLabel("Circle status")).toContainText("2 people in the circle", {
+      timeout: 10_000,
+    });
   } finally {
     await cleanup();
   }

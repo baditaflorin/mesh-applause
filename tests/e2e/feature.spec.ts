@@ -29,14 +29,14 @@ test("roster + private note + reveal propagate peer→peer", async ({ browser, b
     roomId,
   });
   try {
-    // Arm both peers (the "Join wall" gate).
-    await a.getByRole("button", { name: /join wall/i }).click();
-    await b.getByRole("button", { name: /join wall/i }).click();
+    // Arm both peers through the intentional, gesture-gated room entry.
+    await a.getByRole("button", { name: /open the appreciation circle/i }).click();
+    await b.getByRole("button", { name: /open the appreciation circle/i }).click();
 
     // Peer A opens Settings and adds a teammate to the shared roster.
     const teammate = `Robin-${roomId}`;
-    const aDrawer = a.locator(".mesh-settings-drawer, .settings-drawer");
-    if ((await aDrawer.count()) === 0) {
+    const aDrawer = a.getByRole("dialog", { name: "Settings" });
+    if (!(await aDrawer.isVisible())) {
       await a.getByLabel("Open settings").click();
     }
     await a.getByPlaceholder(/add teammate/i).fill(teammate);
@@ -54,15 +54,15 @@ test("roster + private note + reveal propagate peer→peer", async ({ browser, b
     // Peer A composes a private appreciation to the teammate.
     const note = `Thanks for the heroic on-call ${roomId}`;
     await a.locator(".applause-compose textarea").fill(note);
-    await a.getByRole("button", { name: /^send$/i }).click();
+    await a.getByRole("button", { name: /hold this note/i }).click();
 
     // Peer B sees the note as PENDING (count crosses the mesh) — but the text
     // stays hidden until reveal. Assert the pending count, not the text.
-    await expect(b.locator(".applause-hud")).toContainText(/1 pending/, { timeout: 10000 });
+    await expect(b.locator(".applause-hud")).toContainText(/1 waiting/, { timeout: 10000 });
     await expect(b.getByText(note)).toHaveCount(0);
 
     // Peer A (host) reveals the wall.
-    await a.getByRole("button", { name: /reveal wall/i }).click();
+    await a.getByRole("button", { name: /reveal the wall/i }).click();
 
     // Peer B's phase flips to revealed and the note text appears on its wall —
     // the heart of the advertised "revealed all at once" claim.

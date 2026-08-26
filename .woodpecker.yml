@@ -11,7 +11,8 @@ steps:
       - npx playwright install --with-deps chromium
       - npm run fmt:check
       - npm run typecheck
-      - CI=1 npm run test:e2e
+      - CI=1 npm run test
       - npm run smoke
+      - npm run audit:security
       - MESH_RUN_LEAK_TEST=1 MESH_LEAK_DURATION_MS=5000 MESH_LEAK_NOISE_OPS=24 CI=1 npm run test:leak
       - npm run build

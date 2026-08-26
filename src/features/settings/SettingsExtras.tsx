@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MeshButton } from "@baditaflorin/mesh-common";
 
 type Props = {
   myName: string;
@@ -35,7 +36,7 @@ export function SettingsExtras({ myName, onMyNameChange }: Props) {
 
   return (
     <>
-      <label>
+      <label className="applause-settings">
         <span>My name (used when signing)</span>
         <input
           value={myName}
@@ -46,7 +47,7 @@ export function SettingsExtras({ myName, onMyNameChange }: Props) {
 
       <hr />
 
-      <h3>Team roster</h3>
+      <h3 className="applause-settings-heading">Team roster</h3>
       <p className="settings-help">
         Names shared across all phones in this room. Anyone in the room can add or remove.
       </p>
@@ -73,15 +74,15 @@ export function SettingsExtras({ myName, onMyNameChange }: Props) {
             }
           }}
         />
-        <button type="button" onClick={addName}>
+        <MeshButton type="button" size="sm" onClick={addName}>
           Add
-        </button>
+        </MeshButton>
       </div>
 
       <div className="settings-actions">
-        <button type="button" onClick={clearWall}>
+        <MeshButton type="button" variant="danger" onClick={clearWall}>
           Clear wall
-        </button>
+        </MeshButton>
       </div>
     </>
   );
