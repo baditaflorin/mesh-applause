@@ -2,23 +2,21 @@ import { expect, test } from "@playwright/test";
 import { captureConsoleErrors } from "@baditaflorin/mesh-common/testing";
 
 /**
- * Generic smoke test — works for any mesh-* app without modification.
- * Asserts: page loads, settings drawer opens, self-ref bar visible, no
- * console errors.
+ * App smoke test. Modern MeshShell product chrome replaces the legacy
+ * bottom self-reference bar, so the first surface validates visible controls
+ * a person can actually use rather than retired demo footer links.
  */
 
-test("page loads with version + source + tip visible", async ({ page }) => {
+test("page loads with human product chrome and no console errors", async ({ page }) => {
   const c = captureConsoleErrors(page);
   await page.goto("./");
 
-  // Self-ref bar contains a "source" link, a "tip" link, and a version stamp.
-  await expect(page.getByRole("link", { name: /source/i }).first()).toBeVisible();
-  await expect(page.getByRole("link", { name: /tip/i }).first()).toBeVisible();
-  // Version stamp lives in the self-ref bar — mesh-common's class is
-  // `.mesh-self-ref`, legacy apps use `.self-ref`. Both render a `vN.N.N`
-  // string in that footer.
-  const versionLocator = page.locator(".mesh-self-ref, .self-ref").getByText(/^v\d/);
-  await expect(versionLocator.first()).toBeVisible();
+  await expect(page.getByText("Appreciation Circle", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open the appreciation circle" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /invite people to appreciation circle/i }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open settings" })).toBeVisible();
 
   // Allow a moment for async TURN fetch / WebRTC handshake; benign warnings
   // about TURN unreachable are OK, but real errors are not.
