@@ -7,6 +7,7 @@ import { createMeshConfig } from "@baditaflorin/mesh-common";
  */
 export const appConfig = createMeshConfig({
   appName: "mesh-applause",
+  breadcrumbs: false,
   displayName: "Appreciation Circle",
   visualProfile: "gather",
   shellLayout: "inset",
