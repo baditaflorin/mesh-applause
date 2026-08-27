@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "app": "mesh-applause",
+  "sourceCommit": "f53eb07d400a489a503b477ec503dac83ee30356",
+  "releaseCommit": "f53eb07d400a489a503b477ec503dac83ee30356",
+  "meshCommonCommit": "025f7ff72e50c4b54a3f4a2d8c88f4f600dec78f",
+  "recordedAt": "2026-08-27T20:49:00Z"
+}
