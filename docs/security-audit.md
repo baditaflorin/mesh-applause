@@ -1,17 +1,17 @@
-# Security audit — mesh-applause
+# Security audit — repo
 
-Generated: **2026-08-26T02:38:41.678Z** · 16 checks · 16 pass · 0 fail
+Generated: **2026-09-29T17:45:24.670Z** · 16 checks · 16 pass · 0 fail
 
-> A programmatic, CPU-only verification of every claim in the four-layer security stack.
+> A programmatic, CPU-only verification of shared security invariants and app-specific safety checks.
 > Re-run with `npm run audit:security` from this repo. Source: `mesh-common/tests/securityAudit.test.ts`
-> This app does not render the moderator badge yet — only the shared crypto invariants are exercised. The layer-1 guarantees still apply by virtue of bundling `mesh-common`.
+> This app has no app-specific UI audit yet — only the shared crypto invariants are exercised. The layer-1 guarantees still apply by virtue of bundling `mesh-common`.
 
 ## Result
 
 ✅ **All checks pass.**
 
 - crypto / Y.Doc invariants: **16 / 16**
-- UI-flow checks: **0** _(this app does not yet expose the moderator UI; pass 2 skipped)_
+- UI-flow checks: **0** _(no app-specific UI audit is present; pass 2 skipped)_
 
 ## Checks
 
@@ -42,8 +42,8 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "pubkeyA": "777a1126630c2490a8eb0a82ac6d808a030078a9692c6ad4a1944c6fe7f80ef3",
-  "pubkeyB": "777a1126630c2490a8eb0a82ac6d808a030078a9692c6ad4a1944c6fe7f80ef3"
+  "pubkeyA": "8a29531793318b493fc57b443688ac29efb5faca099c95b9505011c21135e87c",
+  "pubkeyB": "8a29531793318b493fc57b443688ac29efb5faca099c95b9505011c21135e87c"
 }
 ```
 
@@ -51,8 +51,8 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "pubkeyA": "67908300fd9f342e",
-  "pubkeyB": "cf066c730aa31ccc"
+  "pubkeyA": "72085ea134791e83",
+  "pubkeyB": "77bbc2c14cb7c4a7"
 }
 ```
 
@@ -69,8 +69,8 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "plantedExpiresAt": 1787711861672,
-  "now": 1787711921675
+  "plantedExpiresAt": 1790703864646,
+  "now": 1790703924654
 }
 ```
 
@@ -78,8 +78,8 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "realPubkey": "6e59a43a008e9e87",
-  "forgerPubkey": "56e9f1d1a4bf8b55"
+  "realPubkey": "76c2141e659b5512",
+  "forgerPubkey": "54c79c492a61f8e8"
 }
 ```
 
@@ -97,7 +97,7 @@ Selected captured evidence (full payloads in `security-audit.json`):
 ```json
 {
   "sigLen": 128,
-  "pubkeyPrefix": "8d9dc4b0740ba047"
+  "pubkeyPrefix": "15004712b62f6fa4"
 }
 ```
 
@@ -105,7 +105,7 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "fingerprint": "ff-66-56-19"
+  "fingerprint": "50-c4-72-89"
 }
 ```
 
@@ -113,7 +113,7 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "peerId": "78073ff4283f2bcb"
+  "peerId": "3f66e37208a7605c"
 }
 ```
 
@@ -122,7 +122,7 @@ Selected captured evidence (full payloads in `security-audit.json`):
 ```json
 {
   "peerId": "alice",
-  "pubkeyPrefix": "fb7b076a3ebe2787",
+  "pubkeyPrefix": "6c5c71c58ac19be0",
   "sigLen": 128
 }
 ```
@@ -131,8 +131,8 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "forgedPubkey": "6e39b57386fc0033",
-  "realPubkey": "b8749e7bf29ede91"
+  "forgedPubkey": "13a3209a5eef3f25",
+  "realPubkey": "f25e765d42deaeb4"
 }
 ```
 
@@ -141,13 +141,13 @@ Selected captured evidence (full payloads in `security-audit.json`):
 ## How to re-run
 
 ```bash
-cd mesh-applause
+cd repo
 npm run audit:security
 ```
 
 The audit runs in two passes:
 
 1. **Crypto invariants** (Vitest, ~1s) — sign/verify roundtrips, TOFU registry, moderator role state machine, forged-claim rejection, expired-claim rejection. Uses in-memory Yjs mock rooms; no browser.
-2. **UI flow** (Playwright, ~5s) — opens two peer browsers, exercises the visible moderator badge: vacant → claim → sync → release.
+2. **UI flow** (Playwright, app-specific) — opens the browser scenario declared in `tests/e2e/security-audit.spec.ts` and verifies the app's own safety contract.
 
 Both run **headless, CPU-only**. No GPU acceleration is required; no signaling server is contacted. The fleet's `judge.sh` aggregator includes these checks alongside per-app feature tests.
