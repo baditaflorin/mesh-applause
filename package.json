@@ -34,27 +34,30 @@
     "test:leak": "MESH_RUN_LEAK_TEST=1 playwright test tests/e2e/memory-leak.spec.ts"
   },
   "dependencies": {
+    "@baditaflorin/mesh-common": "file:../mesh-common",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "y-webrtc": "^10.3.0",
-    "yjs": "13.6.30",
-    "@baditaflorin/mesh-common": "file:../mesh-common"
+    "yjs": "13.6.30"
   },
   "devDependencies": {
+    "@playwright/test": "1.60.0",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.1.0",
     "@types/node": "^22.20.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@vitejs/plugin-react": "^6.1.0",
+    "jsdom": "^29.1.1",
     "prettier": "^3.9.6",
     "typescript": "^5.9.3",
     "vite": "^8.2.2",
-    "vitest": "^4.1.11",
-    "@playwright/test": "1.60.0",
-    "@testing-library/jest-dom": "^7.0.1",
-    "@testing-library/react": "^16.1.0",
-    "jsdom": "^29.1.1"
+    "vitest": "^4.1.11"
   },
   "engines": {
     "node": ">=22"
+  },
+  "overrides": {
+    "undici": "7.29.1"
   }
 }

@@ -1,38 +1,38 @@
-# Security audit — mesh-applause
+# Security audit — repo
 
-Generated: **2026-08-26T02:38:41.678Z** · 16 checks · 16 pass · 0 fail
+Generated: **2026-09-29T17:33:18.045Z** · 16 checks · 16 pass · 0 fail
 
-> A programmatic, CPU-only verification of every claim in the four-layer security stack.
+> A programmatic, CPU-only verification of shared security invariants and app-specific safety checks.
 > Re-run with `npm run audit:security` from this repo. Source: `mesh-common/tests/securityAudit.test.ts`
-> This app does not render the moderator badge yet — only the shared crypto invariants are exercised. The layer-1 guarantees still apply by virtue of bundling `mesh-common`.
+> This app has no app-specific UI audit yet — only the shared crypto invariants are exercised. The layer-1 guarantees still apply by virtue of bundling `mesh-common`.
 
 ## Result
 
 ✅ **All checks pass.**
 
 - crypto / Y.Doc invariants: **16 / 16**
-- UI-flow checks: **0** _(this app does not yet expose the moderator UI; pass 2 skipped)_
+- UI-flow checks: **0**  _(no app-specific UI audit is present; pass 2 skipped)_
 
 ## Checks
 
-| ID                                 | Claim                                                                                | Method                                                                          | Result |
-| ---------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- | :----: |
-| `L1.IDENTITY.persists`             | Identity key persists across reloads via localStorage                                | loadOrCreateIdentity called twice with same prefix; both keypairs match         |   ✅   |
-| `L1.IDENTITY.uniquePerApp`         | Each storagePrefix produces a distinct keypair (no cross-app reuse)                  | loadOrCreateIdentity with two different prefixes; private keys differ           |   ✅   |
-| `L1.MODERATOR.claimSyncs`          | A claims moderator → B's hook reports A as current moderator                         | linkMockRooms relays Y.Doc updates; A.claim() then read on B                    |   ✅   |
-| `L1.MODERATOR.expiredClaimIgnored` | A signed claim with expiresAt in the past is treated as vacant                       | Plant claim with expiresAt = now - 60s; hook reports current=null               |   ✅   |
-| `L1.MODERATOR.forgedClaimRejected` | A claim with a signature not matching its embedded pubkey is treated as vacant       | Plant {pubkey:real, sig:forger}; hook rejects and reports current=null          |   ✅   |
-| `L1.MODERATOR.releaseSyncs`        | Relinquish by the current moderator clears the slot for all peers                    | After A.relinquish() both A and B observe current=null                          |   ✅   |
-| `L1.MODERATOR.signedClaim`         | The moderator claim's signature verifies against the embedded pubkey                 | verify({peerId,pubkey,claimedAt,expiresAt,nonce}, sig, pubkey) === true         |   ✅   |
-| `L1.MODERATOR.vacantDefault`       | Fresh room reports no moderator and isMe=false                                       | useModerator hook on a fresh mock room returns {current:null, isMe:false}       |   ✅   |
-| `L1.SIGN.rejectGarbage`            | Invalid signature / pubkey inputs return false instead of crashing                   | verify({x:1}, 'not-hex', 'also-bad') and verify({x:1}, '', '') both false       |   ✅   |
-| `L1.SIGN.rejectTampered`           | A signed payload with any byte modified fails verification                           | Sign {msg:'hello'}, then verify({msg:'HELLO'}, …) returns false                 |   ✅   |
-| `L1.SIGN.rejectWrongKey`           | A's signature does not verify under B's public key                                   | Sign with kpA.priv, verify with kpB.pub returns false                           |   ✅   |
-| `L1.SIGN.roundtrip`                | A signed payload verifies against the matching pubkey                                | Ed25519 sign(payload, privkey) then verify(payload, sig, pubkey)                |   ✅   |
-| `L1.TOFU.fingerprint`              | trustFingerprint emits a 4x2-hex grouped string for in-person verification           | fingerprint(peerId, pubkey) matches /^xx-xx-xx-xx$/                             |   ✅   |
-| `L1.TOFU.peerIdFromPubkey`         | peerIdFromPubkey is deterministic and uses 64-bit prefix of pubkey                   | Two calls with same pubkey return the same 16-hex-char id                       |   ✅   |
-| `L1.TOFU.register`                 | register() writes a self-signed PubkeyRecord into the registry Y.Map                 | Verify the stored record's signature against its own pubkey                     |   ✅   |
-| `L1.TOFU.rejectImposter`           | A forged record signed by the wrong key does not block the real peer from publishing | Pre-write mallory-signed alice claim; alice arrives and overwrites with her own |   ✅   |
+| ID | Claim | Method | Result |
+|---|---|---|:---:|
+| `L1.IDENTITY.persists` | Identity key persists across reloads via localStorage | loadOrCreateIdentity called twice with same prefix; both keypairs match | ✅ |
+| `L1.IDENTITY.uniquePerApp` | Each storagePrefix produces a distinct keypair (no cross-app reuse) | loadOrCreateIdentity with two different prefixes; private keys differ | ✅ |
+| `L1.MODERATOR.claimSyncs` | A claims moderator → B's hook reports A as current moderator | linkMockRooms relays Y.Doc updates; A.claim() then read on B | ✅ |
+| `L1.MODERATOR.expiredClaimIgnored` | A signed claim with expiresAt in the past is treated as vacant | Plant claim with expiresAt = now - 60s; hook reports current=null | ✅ |
+| `L1.MODERATOR.forgedClaimRejected` | A claim with a signature not matching its embedded pubkey is treated as vacant | Plant {pubkey:real, sig:forger}; hook rejects and reports current=null | ✅ |
+| `L1.MODERATOR.releaseSyncs` | Relinquish by the current moderator clears the slot for all peers | After A.relinquish() both A and B observe current=null | ✅ |
+| `L1.MODERATOR.signedClaim` | The moderator claim's signature verifies against the embedded pubkey | verify({peerId,pubkey,claimedAt,expiresAt,nonce}, sig, pubkey) === true | ✅ |
+| `L1.MODERATOR.vacantDefault` | Fresh room reports no moderator and isMe=false | useModerator hook on a fresh mock room returns {current:null, isMe:false} | ✅ |
+| `L1.SIGN.rejectGarbage` | Invalid signature / pubkey inputs return false instead of crashing | verify({x:1}, 'not-hex', 'also-bad') and verify({x:1}, '', '') both false | ✅ |
+| `L1.SIGN.rejectTampered` | A signed payload with any byte modified fails verification | Sign {msg:'hello'}, then verify({msg:'HELLO'}, …) returns false | ✅ |
+| `L1.SIGN.rejectWrongKey` | A's signature does not verify under B's public key | Sign with kpA.priv, verify with kpB.pub returns false | ✅ |
+| `L1.SIGN.roundtrip` | A signed payload verifies against the matching pubkey | Ed25519 sign(payload, privkey) then verify(payload, sig, pubkey) | ✅ |
+| `L1.TOFU.fingerprint` | trustFingerprint emits a 4x2-hex grouped string for in-person verification | fingerprint(peerId, pubkey) matches /^xx-xx-xx-xx$/ | ✅ |
+| `L1.TOFU.peerIdFromPubkey` | peerIdFromPubkey is deterministic and uses 64-bit prefix of pubkey | Two calls with same pubkey return the same 16-hex-char id | ✅ |
+| `L1.TOFU.register` | register() writes a self-signed PubkeyRecord into the registry Y.Map | Verify the stored record's signature against its own pubkey | ✅ |
+| `L1.TOFU.rejectImposter` | A forged record signed by the wrong key does not block the real peer from publishing | Pre-write mallory-signed alice claim; alice arrives and overwrites with her own | ✅ |
 
 ## Evidence
 
@@ -42,8 +42,8 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "pubkeyA": "777a1126630c2490a8eb0a82ac6d808a030078a9692c6ad4a1944c6fe7f80ef3",
-  "pubkeyB": "777a1126630c2490a8eb0a82ac6d808a030078a9692c6ad4a1944c6fe7f80ef3"
+  "pubkeyA": "52ee5e39854da2e05af0e93df88ecc0dd14bcc9831681bd01fd798341b3b0825",
+  "pubkeyB": "52ee5e39854da2e05af0e93df88ecc0dd14bcc9831681bd01fd798341b3b0825"
 }
 ```
 
@@ -51,8 +51,8 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "pubkeyA": "67908300fd9f342e",
-  "pubkeyB": "cf066c730aa31ccc"
+  "pubkeyA": "db14720ba1505b73",
+  "pubkeyB": "d014dab9b4c90dc7"
 }
 ```
 
@@ -69,8 +69,8 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "plantedExpiresAt": 1787711861672,
-  "now": 1787711921675
+  "plantedExpiresAt": 1790703138031,
+  "now": 1790703198037
 }
 ```
 
@@ -78,8 +78,8 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "realPubkey": "6e59a43a008e9e87",
-  "forgerPubkey": "56e9f1d1a4bf8b55"
+  "realPubkey": "67045160db1b079d",
+  "forgerPubkey": "bf565c0c4d8490b8"
 }
 ```
 
@@ -97,7 +97,7 @@ Selected captured evidence (full payloads in `security-audit.json`):
 ```json
 {
   "sigLen": 128,
-  "pubkeyPrefix": "8d9dc4b0740ba047"
+  "pubkeyPrefix": "763c648a063f65e8"
 }
 ```
 
@@ -105,7 +105,7 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "fingerprint": "ff-66-56-19"
+  "fingerprint": "b5-5f-33-2d"
 }
 ```
 
@@ -113,7 +113,7 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "peerId": "78073ff4283f2bcb"
+  "peerId": "3eee7e97e79e0c29"
 }
 ```
 
@@ -122,7 +122,7 @@ Selected captured evidence (full payloads in `security-audit.json`):
 ```json
 {
   "peerId": "alice",
-  "pubkeyPrefix": "fb7b076a3ebe2787",
+  "pubkeyPrefix": "4ff0ce1c58d3144d",
   "sigLen": 128
 }
 ```
@@ -131,8 +131,8 @@ Selected captured evidence (full payloads in `security-audit.json`):
 
 ```json
 {
-  "forgedPubkey": "6e39b57386fc0033",
-  "realPubkey": "b8749e7bf29ede91"
+  "forgedPubkey": "8854cf34c0680f87",
+  "realPubkey": "3f786699cf12c2f9"
 }
 ```
 
@@ -141,13 +141,13 @@ Selected captured evidence (full payloads in `security-audit.json`):
 ## How to re-run
 
 ```bash
-cd mesh-applause
+cd repo
 npm run audit:security
 ```
 
 The audit runs in two passes:
 
 1. **Crypto invariants** (Vitest, ~1s) — sign/verify roundtrips, TOFU registry, moderator role state machine, forged-claim rejection, expired-claim rejection. Uses in-memory Yjs mock rooms; no browser.
-2. **UI flow** (Playwright, ~5s) — opens two peer browsers, exercises the visible moderator badge: vacant → claim → sync → release.
+2. **UI flow** (Playwright, app-specific) — opens the browser scenario declared in `tests/e2e/security-audit.spec.ts` and verifies the app's own safety contract.
 
 Both run **headless, CPU-only**. No GPU acceleration is required; no signaling server is contacted. The fleet's `judge.sh` aggregator includes these checks alongside per-app feature tests.
